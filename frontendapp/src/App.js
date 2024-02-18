@@ -4,8 +4,8 @@ import axios from 'axios';
 function App() {
   const [products, setProduts] = useState([])
   const [categories, setCategories] = useState([])
-  const [newProduct, setNewProduct] = useState({ id: "9", name: "asd", catId: "3" })
-  const [newCategory, setNewCategory] = useState({ id: "7", name: "Deneme3" })
+  const [newProduct, setNewProduct] = useState({ id: "", name: "", catId: "" })
+  const [newCategory, setNewCategory] = useState({ id: "", name: "" })
 
   useEffect(() => {
     fetchProducts();
@@ -20,7 +20,7 @@ function App() {
     const cats = await axios.get(`http://localhost:3000/categories`)
     setCategories(cats.data)
   }
-  const updateProduct = async () => {
+  const addProduct = async () => {
     try {
       const newProd = await axios.post(`http://localhost:3000/products`, newProduct)
       console.log("Ürün başarıyla eklendi => " + newProd.data)
@@ -30,8 +30,7 @@ function App() {
       console.error('Ürün eklenirken bir hata oluştu:', err.response.data);
     }
   }
-
-  const updateCategory = async () => {
+  const addCategory = async () => {
     try {
       const newCat = await axios.post("http://localhost:3000/categories", newCategory)
       console.log("Ürün başarıyla eklendi => " + newCat.data)
@@ -41,6 +40,15 @@ function App() {
       console.error('Kategori eklenirken bir hata oluştu:', err.response.data);
     }
   }
+  // const updateProduct = async () => {
+  //   try {
+  //     const updatedProd = await axios.put("https://localhost:3000/products",newProduct)
+  //   } catch (err) {
+
+  //   }
+  // }
+
+
 
 
   return (
@@ -69,7 +77,17 @@ function App() {
       </div>
 
       <div>
-        <button type="button" onClick={() => updateCategory()}>Click!</button>
+        <input type='number' value={newProduct.id} onChange={e => setNewProduct({ ...newProduct, id: e.target.value })} placeholder='Id'></input>
+        <input type='text' value={newProduct.name} onChange={e => setNewProduct({ ...newProduct, name: e.target.value })} placeholder='Name'></input>
+
+        <select onChange={(e) => setNewProduct({ ...newProduct, "catId": e.target.value })}>
+          <option value={-1}>Kategori Seçin</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
+
+        <button type="button" onClick={() => addProduct()}>Click!</button>
       </div>
     </div>
   );
