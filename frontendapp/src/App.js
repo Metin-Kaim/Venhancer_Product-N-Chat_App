@@ -4,7 +4,8 @@ import axios from 'axios';
 function App() {
   const [products, setProduts] = useState([])
   const [categories, setCategories] = useState([])
-  const [newProduct, setNewProduct] = useState({ id: 7, name: 'Metin', catId: 2 })
+  const [newProduct, setNewProduct] = useState({ id: "9", name: "asd", catId: "3" })
+  const [newCategory, setNewCategory] = useState({ id: "7", name: "Deneme3" })
 
   useEffect(() => {
     fetchProducts();
@@ -19,16 +20,28 @@ function App() {
     const cats = await axios.get(`http://localhost:3000/categories`)
     setCategories(cats.data)
   }
-  const updateProducts = async () => {
+  const updateProduct = async () => {
     try {
       const newProd = await axios.post(`http://localhost:3000/products`, newProduct)
-      // console.log(newProd.data)
+      console.log("Ürün başarıyla eklendi => " + newProd.data)
       fetchProducts()
     }
     catch (err) {
       console.error('Ürün eklenirken bir hata oluştu:', err.response.data);
     }
   }
+
+  const updateCategory = async () => {
+    try {
+      const newCat = await axios.post("http://localhost:3000/categories", newCategory)
+      console.log("Ürün başarıyla eklendi => " + newCat.data)
+      fetchCategories()
+    }
+    catch (err) {
+      console.error('Kategori eklenirken bir hata oluştu:', err.response.data);
+    }
+  }
+
 
   return (
     <div>
@@ -56,7 +69,7 @@ function App() {
       </div>
 
       <div>
-        <button type="button" onClick={() => updateProducts()}>Click!</button>
+        <button type="button" onClick={() => updateCategory()}>Click!</button>
       </div>
     </div>
   );

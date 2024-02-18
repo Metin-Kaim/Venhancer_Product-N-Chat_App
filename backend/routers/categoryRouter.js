@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
     try{
         const newCategory = req.body
         const result = await client.query('Insert into categories (id,name) values ($1,$2) returning *',[newCategory.id,newCategory.name])
-        console.log('added:', newproduct)
+        console.log('added:', newCategory)
         res.status(201).json(result.rows[0])
     }
     catch(err){
