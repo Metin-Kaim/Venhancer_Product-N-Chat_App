@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     try{
         const newproduct = req.body
-        const result = await client.query('Insert into products (id,name,"catId") values ($1,$2,$3) returning *',[newproduct.id,newproduct.name,newproduct.catId])
+        const result = await client.query('Insert into products (id,name,"catId") values ($1,$2,$3) returning *',[parseInt(newproduct.id),newproduct.name,parseInt(newproduct.catId)])
         console.log('added:', newproduct)
         res.status(201).json(result.rows[0])
     }
