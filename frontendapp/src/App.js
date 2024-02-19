@@ -1,16 +1,28 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import io from 'socket.io-client';
+
+const socket = io.connect("http://localhost:3000")
 
 function App() {
   const [products, setProduts] = useState([])
   const [categories, setCategories] = useState([])
   const [newProduct, setNewProduct] = useState({ id: "", name: "", catId: "" })
   const [newCategory, setNewCategory] = useState({ id: "", name: "" })
-
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState('');
+  const [user, setUser] = useState('');
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  }, [])
+
+    socket.on('chat', (data) => {
+      setMessage(prevOutput => [...prevOutput, <p key={prevOutput.length}><strong>{data.sender}:</strong> {data.message}</p>]);
+
+    })
+    console.log(`Bu bir useeffect kullanımıdır`)
+
+  }, [user])
 
   const fetchProducts = async () => {
     const prods = await axios.get(`http://localhost:3000/products`)
@@ -48,11 +60,26 @@ function App() {
   //   }
   // }
 
-
+  const onClickSendButton = () => {
+    socket.emit('chat',[user, message])
+    // console.log(`Mesaj: ${message}, user: ${user}`)
+  }
 
 
   return (
     <div>
+      <div className="App">
+        <h1>Real-Time Chat App</h1>
+
+        <div>
+          <input type="text" placeholder='Name' onChange={e => setUser(e.target.value)}></input>
+          <input type="text" placeholder='Message' onChange={e => setMessage(e.target.value)}></input>
+          <input type='text' placeholder={message}></input>
+          <button type="button" onClick={() => onClickSendButton()}>SEND</button>
+        </div>
+
+      </div>
+
       <div>
         <h1>Urunler</h1>
         <ul>
@@ -79,7 +106,6 @@ function App() {
       <div>
         <input type='number' value={newProduct.id} onChange={e => setNewProduct({ ...newProduct, id: e.target.value })} placeholder='Id'></input>
         <input type='text' value={newProduct.name} onChange={e => setNewProduct({ ...newProduct, name: e.target.value })} placeholder='Name'></input>
-
         <select onChange={(e) => setNewProduct({ ...newProduct, "catId": e.target.value })}>
           <option value={-1}>Kategori Seçin</option>
           {categories.map((cat) => (
